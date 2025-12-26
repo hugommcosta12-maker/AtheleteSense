@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AthleteSense – Questionário Pós-Treino</title>
+    <!-- SheetJS para exportar Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #0d3b25;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.94);
+            color: #0d3b25;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0d3b25;
+            font-size: 24px;
+        }
+        .info-header {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-left: 4px solid #2e7d32;
+        }
+        .info-header p {
+            margin: 4px 0;
+            font-size: 15px;
+            color: #0d3b25;
+        }
+        .question {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #d0e8d4;
+        }
+        .question:last-child {
+            border-bottom: none;
+        }
+        .question label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #0d3b25;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            color: #0d3b25;
+        }
+        .options label:hover {
+            background: #f1f8e9;
+        }
+        .options input[type="radio"],
+        .options input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            font-size: 15px;
+            resize: vertical;
+            min-height: 60px;
+            color: #0d3b25;
+            background-color: #f8fdf9;
+        }
+        input[type="text"] {
+            min-height: auto;
+        }
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background: #1b5e20;
+        }
+        .logo {
+            text-align: center;
+            font-weight: bold;
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #0d3b25;
+        }
+        .optional {
+            font-size: 13px;
+            color: #558b2f;
+            font-style: italic;
+            margin-top: 4px;
+        }
+        .success-message {
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            border: 1px solid #c8e6c9;
+            text-align: center;
+        }
+
+        /* Mood selector */
+        .mood-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .mood-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            background: #f8fdf9;
+            border: 2px solid #c8e6c9;
+            transition: all 0.2s;
+            width: 80px;
+            color: #0d3b25;
+        }
+        .mood-option:hover {
+            transform: translateY(-4px);
+            border-color: #2e7d32;
+        }
+        .mood-option.selected {
+            border-color: #1b5e20;
+            background: #e8f5e9;
+            font-weight: bold;
+        }
+        .mood-option input {
+            display: none;
+        }
+        .mood-emoji {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+        .mood-label {
+            font-size: 12px;
+            text-align: center;
+            color: #0d3b25;
+        }
+
+        /* Preview section */
+        .preview-section {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8fdf9;
+            border-radius: 10px;
+            border: 1px solid #c8e6c9;
+            display: none;
+        }
+        .preview-section h2 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .preview-table th, .preview-table td {
+            padding: 8px 12px;
+            border: 1px solid #a5d6a7;
+            text-align: left;
+            font-size: 14px;
+        }
+        .preview-table th {
+            background-color: #e8f5e9;
+            color: #0d3b25;
+        }
+        .btn-export {
+            background: #1976d2;
+            margin-top: 15px;
+            width: auto;
+            padding: 10px 20px;
+        }
+        .btn-export:hover {
+            background: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">AthleteSense</div>
+        <h1>Questionário Pós-Treino</h1>
+
+        <div class="info-header">
+            <p><strong>Carimbo de data/hora:</strong> <span id="currentTimestamp"></span></p>
+            <p><strong>Nome do atleta:</strong> <input type="text" id="athleteName" name="athleteName" placeholder="Escreve o teu nome completo" style="width: 180px; display: inline-block; margin-left: 8px; padding: 6px; font-size: 14px; color: #0d3b25;" required></p>
+        </div>
+
+        <form id="postTrainingForm">
+            <input type="hidden" id="timestampInput" name="timestamp">
+
+            <!-- Pergunta 1 -->
+            <div class="question">
+                <label>O treino de hoje correu bem?</label>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="Sim" required> Sim</label>
+                    <label><input type="radio" name="q1" value="Mais ou menos"> Mais ou menos</label>
+                    <label><input type="radio" name="q1" value="Não"> Não</label>
+                </div>
+            </div>
+
+            <!-- Pergunta 2 -->
+            <div class="question">
+                <label>Como te sentes emocionalmente agora?</label>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="Motivado/a" required> Motivado/a</label>
+                    <label><input type="radio" name="q2" value="Neutro/a"> Neutro/a</label>
+                    <label><input type="radio" name="q2" value="Frustrado/a"> Frustrado/a</label>
+                    <label><input type="radio" name="q2" value="Desmotivado/a"> Desmotivado/a</label>
+                    <label>
+                        Outro: <input type="text" name="q2_outro" placeholder="Descreve aqui..." style="width: 70%; margin-left: 8px; display: inline-block; color: #0d3b25;">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pergunta 3 -->
+            <div class="question">
+                <label>O treino foi monótono ou repetitivo?</label>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="Nada – foi dinâmico e interessante" required> Nada – foi dinâmico e interessante</label>
+                    <label><input type="radio" name="q3" value="Um pouco"> Um pouco</label>
+                    <label><input type="radio" name="q3" value="Bastante – senti tédio"> Bastante – senti tédio</label>
+                </div>
+            </div>
+
+            <!-- Pergunta 4 -->
+            <div class="question">
+                <label>Como te sentes fisicamente após o treino?</label>
+                <div class="mood-selector">
+                    <div class="mood-option" data-value="excelente">
+                        <div class="mood-emoji">😄</div>
+                        <div class="mood-label">Excelente</div>
+                        <input type="radio" name="q4" value="Excelente – cheio de energia">
+                    </div>
+                    <div class="mood-option" data-value="bem">
+                        <div class="mood-emoji">🙂</div>
+                        <div class="mood-label">Bem</div>
+                        <input type="radio" name="q4" value="Bem – um pouco cansado, mas tudo bem">
+                    </div>
+                    <div class="mood-option" data-value="cansado">
+                        <div class="mood-emoji">😪</div>
+                        <div class="mood-label">Cansado</div>
+                        <input type="radio" name="q4" value="Cansado – foi intenso">
+                    </div>
+                    <div class="mood-option" data-value="muito-cansado">
+                        <div class="mood-emoji">😴</div>
+                        <div class="mood-label">Muito cansado</div>
+                        <input type="radio" name="q4" value="Muito cansado – sinto-me esgotado">
+                    </div>
+                    <div class="mood-option" data-value="dor">
+                        <div class="mood-emoji">🤕</div>
+                        <div class="mood-label">Dor/mal-estar</div>
+                        <input type="radio" name="q4" value="Dor/mal-estar">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pergunta 5 -->
+            <div class="question">
+                <label>O que melhoravas no treino de hoje? (Escolhe até 2 opções)</label>
+                <div class="options">
+                    <label><input type="checkbox" name="q5" value="Mais jogos/competição"> Mais jogos/competição</label>
+                    <label><input type="checkbox" name="q5" value="Mais tempo para corrigir erros"> Mais tempo para corrigir erros</label>
+                    <label><input type="checkbox" name="q5" value="Mais variedade de exercícios"> Mais variedade de exercícios</label>
+                    <label><input type="checkbox" name="q5" value="Mais tempo de recuperação"> Mais tempo de recuperação</label>
+                    <label><input type="checkbox" name="q5" value="Mais atenção individual do treinador"> Mais atenção individual do treinador</label>
+                    <label>
+                        <input type="checkbox" name="q5_other_check" id="q5_other_check">
+                        Outro: <input type="text" id="q5_other_text" name="q5_other_text" placeholder="Descreve aqui..." style="width: 60%; display: inline-block; margin-left: 8px; color: #0d3b25;">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pergunta 6 -->
+            <div class="question">
+                <label>Para ti, o que precisas melhorar ou trabalhar mais nos treinos?</label>
+                <textarea name="q6" placeholder="Ex: Quero melhorar os cruzamentos, a resistência ou a comunicação em campo." required></textarea>
+            </div>
+
+            <!-- Pergunta 7 -->
+            <div class="question">
+                <label>Há algo que queiras partilhar com o treinador que não foi abordado aqui?</label>
+                <span class="optional">(Opcional)</span>
+                <textarea name="q7" placeholder="Ex: Senti dores no tornozelo direito desde o início do treino."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Gerar Pré-visualização e Exportar</button>
+        </form>
+
+        <!-- Pré-visualização -->
+        <div id="previewSection" class="preview-section">
+            <h2>📊 Pré-visualização dos Dados</h2>
+            <table class="preview-table" id="previewTable">
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Resposta</th>
+                    </tr>
+                </thead>
+                <tbody id="previewBody"></tbody>
+            </table>
+            <button id="exportExcelBtn" class="btn-submit btn-export">📥 Exportar para Excel</button>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            ✅ Dados prontos para análise! Usa o botão "Exportar para Excel".
+        </div>
+    </div>
+
+    <script>
+        // Definir timestamp atual
+        const now = new Date();
+        const ptDate = now.toLocaleDateString('pt-PT');
+        const ptTime = now.toLocaleTimeString('pt-PT', { hour12: false });
+        const timestampStr = `${ptDate}, ${ptTime}`;
+        document.getElementById('currentTimestamp').textContent = timestampStr;
+        document.getElementById('timestampInput').value = timestampStr;
+
+        // Funções de UI
+        const q2Inputs = document.querySelectorAll('input[name="q2"]');
+        const q2OutroField = document.querySelector('input[name="q2_outro"]');
+        q2OutroField.disabled = true;
+        q2Inputs.forEach(radio => {
+            radio.addEventListener('change', () => {
+                q2OutroField.disabled = radio.value !== "Outro";
+                if (!q2OutroField.disabled) q2OutroField.focus();
+            });
+        });
+
+        const moodOptions = document.querySelectorAll('.mood-option');
+        moodOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                moodOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                option.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        const otherCheck = document.getElementById('q5_other_check');
+        const otherText = document.getElementById('q5_other_text');
+        otherText.disabled = true;
+        otherCheck.addEventListener('change', () => {
+            otherText.disabled = !otherCheck.checked;
+            if (otherCheck.checked) otherText.focus();
+        });
+
+        const q5Checkboxes = document.querySelectorAll('input[name="q5"], #q5_other_check');
+        q5Checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checked = Array.from(q5Checkboxes).filter(c => c.checked);
+                if (checked.length > 2) {
+                    cb.checked = false;
+                    alert('Podes selecionar no máximo 2 opções.');
+                }
+            });
+        });
+
+        // Função para obter respostas formatadas
+        function getFormattedData() {
+            const name = document.getElementById('athleteName').value.trim();
+            if (!name) throw new Error('Nome é obrigatório.');
+
+            const formData = new FormData(document.getElementById('postTrainingForm'));
+            const data = {};
+
+            // Processar campos normais
+            for (let [key, value] of formData.entries()) {
+                if (key === 'q5') {
+                    if (!data[key]) data[key] = [];
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            // Tratar "Outro" em Q2
+            const q2Selected = formData.get('q2');
+            if (q2Selected === 'Outro') {
+                data.q2 = formData.get('q2_outro') || 'Não especificado';
+            }
+
+            // Tratar "Outro" em Q5
+            const q5OtherChecked = document.getElementById('q5_other_check').checked;
+            if (q5OtherChecked) {
+                const otherTextValue = document.getElementById('q5_other_text').value.trim() || 'Não especificado';
+                if (!data.q5) data.q5 = [];
+                data.q5.push('Outro: ' + otherTextValue);
+            }
+
+            // Converter arrays em strings para exibição
+            if (Array.isArray(data.q5)) {
+                data.q5_display = data.q5.join('; ');
+            } else {
+                data.q5_display = data.q5 || '';
+            }
+
+            return {
+                "Nome do Atleta": name,
+                "Data/Hora": data.timestamp || timestampStr,
+                "Treino correu bem?": data.q1 || '',
+                "Estado emocional": data.q2 || '',
+                "Treino monótono?": data.q3 || '',
+                "Estado físico": data.q4 || '',
+                "Sugestões de melhoria": data.q5_display || '',
+                "Área de melhoria": data.q6 || '',
+                "Comentário adicional": data.q7 || ''
+            };
+        }
+
+        // Atualizar pré-visualização
+        function updatePreview(data) {
+            const tbody = document.getElementById('previewBody');
+            tbody.innerHTML = '';
+            Object.entries(data).forEach(([key, value]) => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = key;
+                row.insertCell(1).textContent = value;
+            });
+            document.getElementById('previewSection').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'block';
+        }
+
+        // Exportar para Excel
+        function exportToExcel(data) {
+            const ws = XLSX.utils.json_to_sheet([data], { header: Object.keys(data) });
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Feedback Atleta");
+            const timestampSafe = timestampStr.replace(/[/,:]/g, '-');
+            const filename = `AthleteSense_${data["Nome do Atleta"].replace(/\s+/g, '_')}_${timestampSafe}.xlsx`;
+            XLSX.writeFile(wb, filename);
+        }
+
+        // Submissão do formulário
+        document.getElementById('postTrainingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            try {
+                const data = getFormattedData();
+                updatePreview(data);
+                // Scroll to preview
+                document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+
+        // Botão de exportação separado
+        document.getElementById('exportExcelBtn').addEventListener('click', function() {
+            try {
+                const data = getFormattedData();
+                exportToExcel(data);
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+    </script>
+</body>
+</html>
