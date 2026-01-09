@@ -1,4 +1,3 @@
-<!doctype html>
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
@@ -85,7 +84,7 @@
             margin-right: 10px;
             transform: scale(1.2);
         }
-        textarea, input[type="text"] {
+        textarea, input[type="text"], input[type="email"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #a5d6a7;
@@ -96,7 +95,7 @@
             color: #0d3b25;
             background-color: #f8fdf9;
         }
-        input[type="text"] {
+        input[type="text"], input[type="email"] {
             min-height: auto;
         }
         .btn-submit {
@@ -212,14 +211,24 @@
             background-color: #e8f5e9;
             color: #0d3b25;
         }
+
         .btn-export {
             background: #1976d2;
-            margin-top: 15px;
-            width: auto;
             padding: 10px 20px;
+            width: auto;
+            font-size: 16px;
+        }
+        .btn-send {
+            background: #5d4037;
+            padding: 10px 20px;
+            width: auto;
+            font-size: 16px;
         }
         .btn-export:hover {
             background: #0d47a1;
+        }
+        .btn-send:hover {
+            background: #3e2723;
         }
     </style>
 </head>
@@ -230,7 +239,10 @@
 
         <div class="info-header">
             <p><strong>Carimbo de data/hora:</strong> <span id="currentTimestamp"></span></p>
-            <p><strong>Nome do atleta:</strong> <input type="text" id="athleteName" name="athleteName" placeholder="Escreve o teu nome completo" style="width: 180px; display: inline-block; margin-left: 8px; padding: 6px; font-size: 14px; color: #0d3b25;" required></p>
+            <p><strong>Nome do atleta:</strong> 
+                <input type="text" id="athleteName" name="athleteName" placeholder="Escreve o teu nome completo" 
+                    style="width: 180px; display: inline-block; margin-left: 8px; padding: 6px; font-size: 14px; color: #0d3b25;" required>
+            </p>
         </div>
 
         <form id="postTrainingForm">
@@ -255,7 +267,8 @@
                     <label><input type="radio" name="q2" value="Frustrado/a"> Frustrado/a</label>
                     <label><input type="radio" name="q2" value="Desmotivado/a"> Desmotivado/a</label>
                     <label>
-                        Outro: <input type="text" name="q2_outro" placeholder="Descreve aqui..." style="width: 70%; margin-left: 8px; display: inline-block; color: #0d3b25;">
+                        Outro: <input type="text" name="q2_outro" placeholder="Descreve aqui..." 
+                            style="width: 70%; margin-left: 8px; display: inline-block; color: #0d3b25;">
                     </label>
                 </div>
             </div>
@@ -313,7 +326,8 @@
                     <label><input type="checkbox" name="q5" value="Mais atenção individual do treinador"> Mais atenção individual do treinador</label>
                     <label>
                         <input type="checkbox" name="q5_other_check" id="q5_other_check">
-                        Outro: <input type="text" id="q5_other_text" name="q5_other_text" placeholder="Descreve aqui..." style="width: 60%; display: inline-block; margin-left: 8px; color: #0d3b25;">
+                        Outro: <input type="text" id="q5_other_text" name="q5_other_text" placeholder="Descreve aqui..." 
+                            style="width: 60%; display: inline-block; margin-left: 8px; color: #0d3b25;">
                     </label>
                 </div>
             </div>
@@ -331,10 +345,10 @@
                 <textarea name="q7" placeholder="Ex: Senti dores no tornozelo direito desde o início do treino."></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">Gerar Pré-visualização e Exportar</button>
+            <button type="submit" class="btn-submit">Gerar Pré-visualização</button>
         </form>
 
-        <!-- Pré-visualização -->
+        <!-- Pré-visualização e ações -->
         <div id="previewSection" class="preview-section">
             <h2>📊 Pré-visualização dos Dados</h2>
             <table class="preview-table" id="previewTable">
@@ -346,11 +360,26 @@
                 </thead>
                 <tbody id="previewBody"></tbody>
             </table>
-            <button id="exportExcelBtn" class="btn-submit btn-export">📥 Exportar para Excel</button>
+
+            <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+                <button id="exportExcelBtn" class="btn-submit btn-export">📥 Exportar Excel (.xlsx)</button>
+                <button id="sendToCoachBtn" class="btn-submit btn-send">📤 Enviar ao Treinador</button>
+            </div>
+
+            <div id="coachEmailSection" style="margin-top: 15px; text-align: center; display: none;">
+                <label for="coachEmail" style="display: block; margin-bottom: 6px; font-weight: bold; color: #0d3b25;">
+                    E-mail do treinador (opcional):
+                </label>
+                <input type="email" id="coachEmail" placeholder="ex: treinador@clube.pt" 
+                    style="width: 220px; padding: 8px; border: 1px solid #a5d6a7; border-radius: 6px;">
+                <p style="font-size: 12px; color: #558b2f; margin-top: 6px;">
+                    Se souberes o e-mail do treinador, preenche aqui para enviar diretamente.
+                </p>
+            </div>
         </div>
 
         <div id="successMessage" class="success-message">
-            ✅ Dados prontos para análise! Usa o botão "Exportar para Excel".
+            ✅ Dados prontos! Usa os botões acima para exportar ou enviar ao treinador.
         </div>
     </div>
 
@@ -363,7 +392,7 @@
         document.getElementById('currentTimestamp').textContent = timestampStr;
         document.getElementById('timestampInput').value = timestampStr;
 
-        // Funções de UI
+        // === Lógica de UI ===
         const q2Inputs = document.querySelectorAll('input[name="q2"]');
         const q2OutroField = document.querySelector('input[name="q2_outro"]');
         q2OutroField.disabled = true;
@@ -402,15 +431,14 @@
             });
         });
 
-        // Função para obter respostas formatadas
+        // === Função para obter dados formatados ===
         function getFormattedData() {
             const name = document.getElementById('athleteName').value.trim();
-            if (!name) throw new Error('Nome é obrigatório.');
+            if (!name) throw new Error('Por favor, insere o teu nome.');
 
             const formData = new FormData(document.getElementById('postTrainingForm'));
             const data = {};
 
-            // Processar campos normais
             for (let [key, value] of formData.entries()) {
                 if (key === 'q5') {
                     if (!data[key]) data[key] = [];
@@ -421,25 +449,20 @@
             }
 
             // Tratar "Outro" em Q2
-            const q2Selected = formData.get('q2');
-            if (q2Selected === 'Outro') {
-                data.q2 = formData.get('q2_outro') || 'Não especificado';
+            if (data.q2 === 'Outro') {
+                data.q2 = formData.get('q2_outro')?.trim() || 'Não especificado';
             }
 
             // Tratar "Outro" em Q5
-            const q5OtherChecked = document.getElementById('q5_other_check').checked;
+            const q5OtherChecked = otherCheck.checked;
             if (q5OtherChecked) {
-                const otherTextValue = document.getElementById('q5_other_text').value.trim() || 'Não especificado';
+                const otherValue = otherText.value.trim() || 'Não especificado';
                 if (!data.q5) data.q5 = [];
-                data.q5.push('Outro: ' + otherTextValue);
+                data.q5.push('Outro: ' + otherValue);
             }
 
-            // Converter arrays em strings para exibição
-            if (Array.isArray(data.q5)) {
-                data.q5_display = data.q5.join('; ');
-            } else {
-                data.q5_display = data.q5 || '';
-            }
+            // Converter q5 em string
+            const q5Display = Array.isArray(data.q5) ? data.q5.join('; ') : (data.q5 || '');
 
             return {
                 "Nome do Atleta": name,
@@ -448,13 +471,13 @@
                 "Estado emocional": data.q2 || '',
                 "Treino monótono?": data.q3 || '',
                 "Estado físico": data.q4 || '',
-                "Sugestões de melhoria": data.q5_display || '',
+                "Sugestões de melhoria": q5Display,
                 "Área de melhoria": data.q6 || '',
                 "Comentário adicional": data.q7 || ''
             };
         }
 
-        // Atualizar pré-visualização
+        // === Pré-visualização ===
         function updatePreview(data) {
             const tbody = document.getElementById('previewBody');
             tbody.innerHTML = '';
@@ -467,36 +490,100 @@
             document.getElementById('successMessage').style.display = 'block';
         }
 
-        // Exportar para Excel
+        // === Exportar Excel ===
         function exportToExcel(data) {
             const ws = XLSX.utils.json_to_sheet([data], { header: Object.keys(data) });
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Feedback Atleta");
+            XLSX.utils.book_append_sheet(wb, ws, "Feedback");
             const timestampSafe = timestampStr.replace(/[/,:]/g, '-');
             const filename = `AthleteSense_${data["Nome do Atleta"].replace(/\s+/g, '_')}_${timestampSafe}.xlsx`;
             XLSX.writeFile(wb, filename);
         }
 
-        // Submissão do formulário
+        // === Formatar dados como texto para e-mail ===
+        function formatDataAsText(data) {
+            return `
+📌 Feedback Pós-Treino – AthleteSense
+
+Nome do Atleta: ${data["Nome do Atleta"]}
+Data/Hora: ${data["Data/Hora"]}
+
+✅ Treino correu bem? 
+→ ${data["Treino correu bem?"]}
+
+🧠 Estado emocional: 
+→ ${data["Estado emocional"]}
+
+🔁 Treino monótono? 
+→ ${data["Treino monótono?"]}
+
+💪 Estado físico: 
+→ ${data["Estado físico"]}
+
+💡 Sugestões de melhoria: 
+→ ${data["Sugestões de melhoria"]}
+
+🎯 Área de melhoria: 
+→ ${data["Área de melhoria"]}
+
+💬 Comentário adicional: 
+→ ${data["Comentário adicional"] || "Nenhum"}
+
+—
+Gerado automaticamente pelo sistema AthleteSense.
+            `.trim();
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // === Eventos ===
         document.getElementById('postTrainingForm').addEventListener('submit', function(e) {
             e.preventDefault();
             try {
                 const data = getFormattedData();
                 updatePreview(data);
-                // Scroll to preview
                 document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
             } catch (err) {
                 alert(err.message);
             }
         });
 
-        // Botão de exportação separado
         document.getElementById('exportExcelBtn').addEventListener('click', function() {
             try {
                 const data = getFormattedData();
                 exportToExcel(data);
             } catch (err) {
-                alert(err.message);
+                alert('Erro ao exportar: ' + err.message);
+            }
+        });
+
+        document.getElementById('sendToCoachBtn').addEventListener('click', function() {
+            try {
+                const data = getFormattedData();
+                const bodyText = encodeURIComponent(formatDataAsText(data));
+                const subject = encodeURIComponent(`Feedback Pós-Treino – ${data["Nome do Atleta"]}`);
+                
+                const coachEmail = document.getElementById('coachEmail').value.trim();
+                document.getElementById('coachEmailSection').style.display = 'block';
+
+                if (coachEmail && !isValidEmail(coachEmail)) {
+                    alert('Por favor, insere um e-mail válido do treinador.');
+                    document.getElementById('coachEmail').focus();
+                    return;
+                }
+
+                const mailtoLink = `mailto:${coachEmail}?subject=${subject}&body=${bodyText}`;
+                
+                if (!coachEmail) {
+                    alert('Vai abrir o teu e-mail. Por favor, adiciona o e-mail do treinador e envia esta mensagem.');
+                }
+
+                window.location.href = mailtoLink;
+                
+            } catch (err) {
+                alert('Erro ao preparar envio: ' + err.message);
             }
         });
     </script>
