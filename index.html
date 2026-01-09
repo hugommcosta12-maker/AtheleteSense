@@ -84,7 +84,7 @@
             margin-right: 10px;
             transform: scale(1.2);
         }
-        textarea, input[type="text"], input[type="email"] {
+        textarea, input[type="text"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #a5d6a7;
@@ -95,7 +95,7 @@
             color: #0d3b25;
             background-color: #f8fdf9;
         }
-        input[type="text"], input[type="email"] {
+        input[type="text"] {
             min-height: auto;
         }
         .btn-submit {
@@ -230,6 +230,13 @@
         .btn-send:hover {
             background: #3e2723;
         }
+
+        #sheetStatus {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            min-height: 24px;
+        }
     </style>
 </head>
 <body>
@@ -363,19 +370,10 @@
 
             <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
                 <button id="exportExcelBtn" class="btn-submit btn-export">📥 Exportar Excel (.xlsx)</button>
-                <button id="sendToCoachBtn" class="btn-submit btn-send">📤 Enviar ao Treinador</button>
+                <button id="sendToSheetBtn" class="btn-submit btn-send">📤 Enviar para Google Sheet</button>
             </div>
 
-            <div id="coachEmailSection" style="margin-top: 15px; text-align: center; display: none;">
-                <label for="coachEmail" style="display: block; margin-bottom: 6px; font-weight: bold; color: #0d3b25;">
-                    E-mail do treinador (opcional):
-                </label>
-                <input type="email" id="coachEmail" placeholder="ex: treinador@clube.pt" 
-                    style="width: 220px; padding: 8px; border: 1px solid #a5d6a7; border-radius: 6px;">
-                <p style="font-size: 12px; color: #558b2f; margin-top: 6px;">
-                    Se souberes o e-mail do treinador, preenche aqui para enviar diretamente.
-                </p>
-            </div>
+            <div id="sheetStatus"></div>
         </div>
 
         <div id="successMessage" class="success-message">
@@ -500,42 +498,37 @@
             XLSX.writeFile(wb, filename);
         }
 
-        // === Formatar dados como texto para e-mail ===
-        function formatDataAsText(data) {
-            return `
-📌 Feedback Pós-Treino – AthleteSense
+        // === Enviar para Google Sheet ===
+        async function sendToGoogleSheet(data) {
+            // 🔑 SUBSTITUI ESTE URL PELO TEU DO GOOGLE APPS SCRIPT!
+            const SHEET_URL = 'https://script.google.com/macros/s/YOUR_WEB_APP_URL/exec';
 
-Nome do Atleta: ${data["Nome do Atleta"]}
-Data/Hora: ${data["Data/Hora"]}
+            const statusEl = document.getElementById('sheetStatus');
+            statusEl.textContent = 'A enviar para o Google Sheet...';
+            statusEl.style.color = '#558b2f';
 
-✅ Treino correu bem? 
-→ ${data["Treino correu bem?"]}
+            try {
+                // Google Apps Script com no-cors não permite ler resposta, mas envia mesmo assim
+                await fetch(SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-🧠 Estado emocional: 
-→ ${data["Estado emocional"]}
+                // Como é no-cors, assumimos sucesso após 1.5s
+                setTimeout(() => {
+                    statusEl.textContent = '✅ Enviado com sucesso para o Google Sheet!';
+                    statusEl.style.color = '#1b5e20';
+                }, 1500);
 
-🔁 Treino monótono? 
-→ ${data["Treino monótono?"]}
-
-💪 Estado físico: 
-→ ${data["Estado físico"]}
-
-💡 Sugestões de melhoria: 
-→ ${data["Sugestões de melhoria"]}
-
-🎯 Área de melhoria: 
-→ ${data["Área de melhoria"]}
-
-💬 Comentário adicional: 
-→ ${data["Comentário adicional"] || "Nenhum"}
-
-—
-Gerado automaticamente pelo sistema AthleteSense.
-            `.trim();
-        }
-
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            } catch (err) {
+                console.error('Erro ao enviar:', err);
+                statusEl.textContent = '❌ Falha na ligação. Verifica a consola (F12).';
+                statusEl.style.color = '#d32f2f';
+            }
         }
 
         // === Eventos ===
@@ -559,31 +552,12 @@ Gerado automaticamente pelo sistema AthleteSense.
             }
         });
 
-        document.getElementById('sendToCoachBtn').addEventListener('click', function() {
+        document.getElementById('sendToSheetBtn').addEventListener('click', async function() {
             try {
                 const data = getFormattedData();
-                const bodyText = encodeURIComponent(formatDataAsText(data));
-                const subject = encodeURIComponent(`Feedback Pós-Treino – ${data["Nome do Atleta"]}`);
-                
-                const coachEmail = document.getElementById('coachEmail').value.trim();
-                document.getElementById('coachEmailSection').style.display = 'block';
-
-                if (coachEmail && !isValidEmail(coachEmail)) {
-                    alert('Por favor, insere um e-mail válido do treinador.');
-                    document.getElementById('coachEmail').focus();
-                    return;
-                }
-
-                const mailtoLink = `mailto:${coachEmail}?subject=${subject}&body=${bodyText}`;
-                
-                if (!coachEmail) {
-                    alert('Vai abrir o teu e-mail. Por favor, adiciona o e-mail do treinador e envia esta mensagem.');
-                }
-
-                window.location.href = mailtoLink;
-                
+                await sendToGoogleSheet(data);
             } catch (err) {
-                alert('Erro ao preparar envio: ' + err.message);
+                alert('Erro: ' + err.message);
             }
         });
     </script>
