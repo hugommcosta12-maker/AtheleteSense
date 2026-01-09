@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AthleteSense – Questionário Pós-Treino</title>
-    <!-- SheetJS para exportar Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <style>
         * {
@@ -139,7 +138,6 @@
             text-align: center;
         }
 
-        /* Mood selector */
         .mood-selector {
             display: flex;
             flex-wrap: wrap;
@@ -182,7 +180,6 @@
             color: #0d3b25;
         }
 
-        /* Preview section */
         .preview-section {
             margin-top: 30px;
             padding: 15px;
@@ -212,24 +209,16 @@
             color: #0d3b25;
         }
 
-        .btn-export {
-            background: #1976d2;
+        .btn-export, .btn-send {
             padding: 10px 20px;
             width: auto;
             font-size: 16px;
+            margin: 0 6px;
         }
-        .btn-send {
-            background: #5d4037;
-            padding: 10px 20px;
-            width: auto;
-            font-size: 16px;
-        }
-        .btn-export:hover {
-            background: #0d47a1;
-        }
-        .btn-send:hover {
-            background: #3e2723;
-        }
+        .btn-export { background: #1976d2; }
+        .btn-send { background: #5d4037; }
+        .btn-export:hover { background: #0d47a1; }
+        .btn-send:hover { background: #3e2723; }
 
         #sheetStatus {
             margin-top: 15px;
@@ -245,9 +234,9 @@
         <h1>Questionário Pós-Treino</h1>
 
         <div class="info-header">
-            <p><strong>Carimbo de data/hora:</strong> <span id="currentTimestamp"></span></p>
+            <p><strong>Data/Hora:</strong> <span id="currentTimestamp"></span></p>
             <p><strong>Nome do atleta:</strong> 
-                <input type="text" id="athleteName" name="athleteName" placeholder="Escreve o teu nome completo" 
+                <input type="text" id="athleteName" name="athleteName" placeholder="O teu nome" 
                     style="width: 180px; display: inline-block; margin-left: 8px; padding: 6px; font-size: 14px; color: #0d3b25;" required>
             </p>
         </div>
@@ -255,7 +244,7 @@
         <form id="postTrainingForm">
             <input type="hidden" id="timestampInput" name="timestamp">
 
-            <!-- Pergunta 1 -->
+            <!-- Perguntas (mantidas iguais) -->
             <div class="question">
                 <label>O treino de hoje correu bem?</label>
                 <div class="options">
@@ -265,7 +254,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 2 -->
             <div class="question">
                 <label>Como te sentes emocionalmente agora?</label>
                 <div class="options">
@@ -274,13 +262,11 @@
                     <label><input type="radio" name="q2" value="Frustrado/a"> Frustrado/a</label>
                     <label><input type="radio" name="q2" value="Desmotivado/a"> Desmotivado/a</label>
                     <label>
-                        Outro: <input type="text" name="q2_outro" placeholder="Descreve aqui..." 
-                            style="width: 70%; margin-left: 8px; display: inline-block; color: #0d3b25;">
+                        Outro: <input type="text" name="q2_outro" placeholder="Descreve aqui..." style="width: 70%; margin-left: 8px; display: inline-block; color: #0d3b25;">
                     </label>
                 </div>
             </div>
 
-            <!-- Pergunta 3 -->
             <div class="question">
                 <label>O treino foi monótono ou repetitivo?</label>
                 <div class="options">
@@ -290,39 +276,17 @@
                 </div>
             </div>
 
-            <!-- Pergunta 4 -->
             <div class="question">
                 <label>Como te sentes fisicamente após o treino?</label>
                 <div class="mood-selector">
-                    <div class="mood-option" data-value="excelente">
-                        <div class="mood-emoji">😄</div>
-                        <div class="mood-label">Excelente</div>
-                        <input type="radio" name="q4" value="Excelente – cheio de energia">
-                    </div>
-                    <div class="mood-option" data-value="bem">
-                        <div class="mood-emoji">🙂</div>
-                        <div class="mood-label">Bem</div>
-                        <input type="radio" name="q4" value="Bem – um pouco cansado, mas tudo bem">
-                    </div>
-                    <div class="mood-option" data-value="cansado">
-                        <div class="mood-emoji">😪</div>
-                        <div class="mood-label">Cansado</div>
-                        <input type="radio" name="q4" value="Cansado – foi intenso">
-                    </div>
-                    <div class="mood-option" data-value="muito-cansado">
-                        <div class="mood-emoji">😴</div>
-                        <div class="mood-label">Muito cansado</div>
-                        <input type="radio" name="q4" value="Muito cansado – sinto-me esgotado">
-                    </div>
-                    <div class="mood-option" data-value="dor">
-                        <div class="mood-emoji">🤕</div>
-                        <div class="mood-label">Dor/mal-estar</div>
-                        <input type="radio" name="q4" value="Dor/mal-estar">
-                    </div>
+                    <div class="mood-option"><div class="mood-emoji">😄</div><div class="mood-label">Excelente</div><input type="radio" name="q4" value="Excelente – cheio de energia"></div>
+                    <div class="mood-option"><div class="mood-emoji">🙂</div><div class="mood-label">Bem</div><input type="radio" name="q4" value="Bem – um pouco cansado, mas tudo bem"></div>
+                    <div class="mood-option"><div class="mood-emoji">😪</div><div class="mood-label">Cansado</div><input type="radio" name="q4" value="Cansado – foi intenso"></div>
+                    <div class="mood-option"><div class="mood-emoji">😴</div><div class="mood-label">Muito cansado</div><input type="radio" name="q4" value="Muito cansado – sinto-me esgotado"></div>
+                    <div class="mood-option"><div class="mood-emoji">🤕</div><div class="mood-label">Dor/mal-estar</div><input type="radio" name="q4" value="Dor/mal-estar"></div>
                 </div>
             </div>
 
-            <!-- Pergunta 5 -->
             <div class="question">
                 <label>O que melhoravas no treino de hoje? (Escolhe até 2 opções)</label>
                 <div class="options">
@@ -332,81 +296,66 @@
                     <label><input type="checkbox" name="q5" value="Mais tempo de recuperação"> Mais tempo de recuperação</label>
                     <label><input type="checkbox" name="q5" value="Mais atenção individual do treinador"> Mais atenção individual do treinador</label>
                     <label>
-                        <input type="checkbox" name="q5_other_check" id="q5_other_check">
-                        Outro: <input type="text" id="q5_other_text" name="q5_other_text" placeholder="Descreve aqui..." 
-                            style="width: 60%; display: inline-block; margin-left: 8px; color: #0d3b25;">
+                        <input type="checkbox" id="q5_other_check">
+                        Outro: <input type="text" id="q5_other_text" placeholder="Descreve aqui..." style="width: 60%; margin-left: 8px; display: inline-block; color: #0d3b25;">
                     </label>
                 </div>
             </div>
 
-            <!-- Pergunta 6 -->
             <div class="question">
                 <label>Para ti, o que precisas melhorar ou trabalhar mais nos treinos?</label>
-                <textarea name="q6" placeholder="Ex: Quero melhorar os cruzamentos, a resistência ou a comunicação em campo." required></textarea>
+                <textarea name="q6" placeholder="Ex: Quero melhorar os cruzamentos..." required></textarea>
             </div>
 
-            <!-- Pergunta 7 -->
             <div class="question">
                 <label>Há algo que queiras partilhar com o treinador que não foi abordado aqui?</label>
                 <span class="optional">(Opcional)</span>
-                <textarea name="q7" placeholder="Ex: Senti dores no tornozelo direito desde o início do treino."></textarea>
+                <textarea name="q7" placeholder="Ex: Senti dores no tornozelo..."></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">Gerar Pré-visualização</button>
+            <button type="submit" class="btn-submit">Ver Pré-visualização</button>
         </form>
 
-        <!-- Pré-visualização e ações -->
         <div id="previewSection" class="preview-section">
-            <h2>📊 Pré-visualização dos Dados</h2>
-            <table class="preview-table" id="previewTable">
-                <thead>
-                    <tr>
-                        <th>Campo</th>
-                        <th>Resposta</th>
-                    </tr>
-                </thead>
+            <h2>📊 Pré-visualização</h2>
+            <table class="preview-table">
+                <thead><tr><th>Campo</th><th>Resposta</th></tr></thead>
                 <tbody id="previewBody"></tbody>
             </table>
 
-            <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
-                <button id="exportExcelBtn" class="btn-submit btn-export">📥 Exportar Excel (.xlsx)</button>
-                <button id="sendToSheetBtn" class="btn-submit btn-send">📤 Enviar para Google Sheet</button>
+            <div style="margin-top: 20px; text-align: center;">
+                <button id="exportExcelBtn" class="btn-submit btn-export">📥 Guardar no Meu Dispositivo</button>
+                <button id="sendToSheetBtn" class="btn-submit btn-send">📤 Enviar para o Sistema do Treinador</button>
             </div>
-
             <div id="sheetStatus"></div>
         </div>
 
         <div id="successMessage" class="success-message">
-            ✅ Dados prontos! Usa os botões acima para exportar ou enviar ao treinador.
+            ✅ Pronto! Podes guardar ou enviar os teus dados.
         </div>
     </div>
 
     <script>
-        // Definir timestamp atual
+        // Timestamp atual
         const now = new Date();
-        const ptDate = now.toLocaleDateString('pt-PT');
-        const ptTime = now.toLocaleTimeString('pt-PT', { hour12: false });
-        const timestampStr = `${ptDate}, ${ptTime}`;
+        const timestampStr = `${now.toLocaleDateString('pt-PT')}, ${now.toLocaleTimeString('pt-PT', { hour12: false })}`;
         document.getElementById('currentTimestamp').textContent = timestampStr;
         document.getElementById('timestampInput').value = timestampStr;
 
-        // === Lógica de UI ===
+        // === Lógica de UI (igual) ===
         const q2Inputs = document.querySelectorAll('input[name="q2"]');
         const q2OutroField = document.querySelector('input[name="q2_outro"]');
         q2OutroField.disabled = true;
-        q2Inputs.forEach(radio => {
-            radio.addEventListener('change', () => {
-                q2OutroField.disabled = radio.value !== "Outro";
-                if (!q2OutroField.disabled) q2OutroField.focus();
-            });
-        });
+        q2Inputs.forEach(r => r.addEventListener('change', () => {
+            q2OutroField.disabled = r.value !== "Outro";
+            if (!q2OutroField.disabled) q2OutroField.focus();
+        }));
 
-        const moodOptions = document.querySelectorAll('.mood-option');
-        moodOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                moodOptions.forEach(opt => opt.classList.remove('selected'));
-                option.classList.add('selected');
-                option.querySelector('input[type="radio"]').checked = true;
+        document.querySelectorAll('.mood-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.mood-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                opt.querySelector('input').checked = true;
             });
         });
 
@@ -418,49 +367,40 @@
             if (otherCheck.checked) otherText.focus();
         });
 
-        const q5Checkboxes = document.querySelectorAll('input[name="q5"], #q5_other_check');
-        q5Checkboxes.forEach(cb => {
+        document.querySelectorAll('input[name="q5"], #q5_other_check').forEach(cb => {
             cb.addEventListener('change', () => {
-                const checked = Array.from(q5Checkboxes).filter(c => c.checked);
+                const checked = Array.from(document.querySelectorAll('input[name="q5"]:checked, #q5_other_check:checked'));
                 if (checked.length > 2) {
                     cb.checked = false;
-                    alert('Podes selecionar no máximo 2 opções.');
+                    alert('Máximo de 2 opções.');
                 }
             });
         });
 
-        // === Função para obter dados formatados ===
+        // === Obter dados ===
         function getFormattedData() {
             const name = document.getElementById('athleteName').value.trim();
-            if (!name) throw new Error('Por favor, insere o teu nome.');
+            if (!name) throw new Error('Insere o teu nome.');
 
             const formData = new FormData(document.getElementById('postTrainingForm'));
             const data = {};
 
-            for (let [key, value] of formData.entries()) {
-                if (key === 'q5') {
-                    if (!data[key]) data[key] = [];
-                    data[key].push(value);
+            for (let [k, v] of formData.entries()) {
+                if (k === 'q5') {
+                    if (!data[k]) data[k] = [];
+                    data[k].push(v);
                 } else {
-                    data[key] = value;
+                    data[k] = v;
                 }
             }
 
-            // Tratar "Outro" em Q2
-            if (data.q2 === 'Outro') {
-                data.q2 = formData.get('q2_outro')?.trim() || 'Não especificado';
-            }
-
-            // Tratar "Outro" em Q5
-            const q5OtherChecked = otherCheck.checked;
-            if (q5OtherChecked) {
-                const otherValue = otherText.value.trim() || 'Não especificado';
+            if (data.q2 === 'Outro') data.q2 = formData.get('q2_outro')?.trim() || 'Não especificado';
+            
+            if (otherCheck.checked) {
+                const val = otherText.value.trim() || 'Não especificado';
                 if (!data.q5) data.q5 = [];
-                data.q5.push('Outro: ' + otherValue);
+                data.q5.push('Outro: ' + val);
             }
-
-            // Converter q5 em string
-            const q5Display = Array.isArray(data.q5) ? data.q5.join('; ') : (data.q5 || '');
 
             return {
                 "Nome do Atleta": name,
@@ -469,7 +409,7 @@
                 "Estado emocional": data.q2 || '',
                 "Treino monótono?": data.q3 || '',
                 "Estado físico": data.q4 || '',
-                "Sugestões de melhoria": q5Display,
+                "Sugestões de melhoria": Array.isArray(data.q5) ? data.q5.join('; ') : (data.q5 || ''),
                 "Área de melhoria": data.q6 || '',
                 "Comentário adicional": data.q7 || ''
             };
@@ -479,10 +419,10 @@
         function updatePreview(data) {
             const tbody = document.getElementById('previewBody');
             tbody.innerHTML = '';
-            Object.entries(data).forEach(([key, value]) => {
+            Object.entries(data).forEach(([k, v]) => {
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = key;
-                row.insertCell(1).textContent = value;
+                row.insertCell(0).textContent = k;
+                row.insertCell(1).textContent = v;
             });
             document.getElementById('previewSection').style.display = 'block';
             document.getElementById('successMessage').style.display = 'block';
@@ -490,75 +430,59 @@
 
         // === Exportar Excel ===
         function exportToExcel(data) {
-            const ws = XLSX.utils.json_to_sheet([data], { header: Object.keys(data) });
+            const ws = XLSX.utils.json_to_sheet([data]);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Feedback");
-            const timestampSafe = timestampStr.replace(/[/,:]/g, '-');
-            const filename = `AthleteSense_${data["Nome do Atleta"].replace(/\s+/g, '_')}_${timestampSafe}.xlsx`;
-            XLSX.writeFile(wb, filename);
+            const ts = timestampStr.replace(/[/,:]/g, '-');
+            XLSX.writeFile(wb, `AthleteSense_${data["Nome do Atleta"].replace(/\s+/g, '_')}_${ts}.xlsx`);
         }
 
         // === Enviar para Google Sheet ===
         async function sendToGoogleSheet(data) {
-            // 🔑 SUBSTITUI ESTE URL PELO TEU DO GOOGLE APPS SCRIPT!
-            const SHEET_URL = 'https://script.google.com/macros/s/YOUR_WEB_APP_URL/exec';
+            // 🔑 SUBSTITUI PELO TEU URL DO APPS SCRIPT!
+            const SHEET_URL = 'https://script.google.com/macros/s/SEU_WEB_APP_URL/exec';
 
-            const statusEl = document.getElementById('sheetStatus');
-            statusEl.textContent = 'A enviar para o Google Sheet...';
-            statusEl.style.color = '#558b2f';
+            const status = document.getElementById('sheetStatus');
+            status.textContent = 'A enviar para o sistema do treinador...';
+            status.style.color = '#558b2f';
 
             try {
-                // Google Apps Script com no-cors não permite ler resposta, mas envia mesmo assim
                 await fetch(SHEET_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-
-                // Como é no-cors, assumimos sucesso após 1.5s
                 setTimeout(() => {
-                    statusEl.textContent = '✅ Enviado com sucesso para o Google Sheet!';
-                    statusEl.style.color = '#1b5e20';
+                    status.textContent = '✅ Enviado! O treinador receberá estes dados.';
+                    status.style.color = '#1b5e20';
                 }, 1500);
-
             } catch (err) {
-                console.error('Erro ao enviar:', err);
-                statusEl.textContent = '❌ Falha na ligação. Verifica a consola (F12).';
-                statusEl.style.color = '#d32f2f';
+                status.textContent = '❌ Erro. Tenta novamente.';
+                status.style.color = '#d32f2f';
+                console.error(err);
             }
         }
 
         // === Eventos ===
-        document.getElementById('postTrainingForm').addEventListener('submit', function(e) {
+        document.getElementById('postTrainingForm').addEventListener('submit', e => {
             e.preventDefault();
             try {
-                const data = getFormattedData();
-                updatePreview(data);
+                updatePreview(getFormattedData());
                 document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
             } catch (err) {
                 alert(err.message);
             }
         });
 
-        document.getElementById('exportExcelBtn').addEventListener('click', function() {
-            try {
-                const data = getFormattedData();
-                exportToExcel(data);
-            } catch (err) {
-                alert('Erro ao exportar: ' + err.message);
-            }
+        document.getElementById('exportExcelBtn').addEventListener('click', () => {
+            try { exportToExcel(getFormattedData()); }
+            catch (err) { alert('Erro: ' + err.message); }
         });
 
-        document.getElementById('sendToSheetBtn').addEventListener('click', async function() {
-            try {
-                const data = getFormattedData();
-                await sendToGoogleSheet(data);
-            } catch (err) {
-                alert('Erro: ' + err.message);
-            }
+        document.getElementById('sendToSheetBtn').addEventListener('click', async () => {
+            try { await sendToGoogleSheet(getFormattedData()); }
+            catch (err) { alert('Erro: ' + err.message); }
         });
     </script>
 </body>
