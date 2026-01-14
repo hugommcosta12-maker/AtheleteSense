@@ -194,10 +194,9 @@
         </div>
 
         <!-- Formulário Netlify -->
-        <form name="athlete-feedback" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
-            <!-- Campo oculto anti-bot -->
+        <form name="athlete-feedback" method="POST" data-netlify="true">
             <input type="hidden" name="form-name" value="athlete-feedback" />
-            
+
             <!-- Seleção do treinador -->
             <div class="question">
                 <label for="coach_email">E-mail do teu treinador:</label>
@@ -289,25 +288,27 @@
     </div>
 
     <script>
-        // Timestamp
+        // Definir timestamp atual
         const now = new Date();
         const timestampStr = `${now.toLocaleDateString('pt-PT')}, ${now.toLocaleTimeString('pt-PT', { hour12: false })}`;
         document.getElementById('currentTimestamp').textContent = timestampStr;
 
-        // === Lógica de UI ===
+        // === Lógica interativa ===
         const q2Inputs = document.querySelectorAll('input[name="q2"]');
         const q2OutroField = document.querySelector('input[name="q2_outro"]');
         q2OutroField.disabled = true;
-        q2Inputs.forEach(r => r.addEventListener('change', () => {
-            q2OutroField.disabled = r.value !== "Outro";
-            if (!q2OutroField.disabled) q2OutroField.focus();
-        }));
+        q2Inputs.forEach(radio => {
+            radio.addEventListener('change', () => {
+                q2OutroField.disabled = radio.value !== "Outro";
+                if (!q2OutroField.disabled) q2OutroField.focus();
+            });
+        });
 
-        document.querySelectorAll('.mood-option').forEach(opt => {
-            opt.addEventListener('click', () => {
-                document.querySelectorAll('.mood-option').forEach(o => o.classList.remove('selected'));
-                opt.classList.add('selected');
-                opt.querySelector('input').checked = true;
+        document.querySelectorAll('.mood-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                option.querySelector('input[type="radio"]').checked = true;
             });
         });
 
@@ -325,12 +326,12 @@
                 const checked = Array.from(q5Checkboxes).filter(c => c.checked);
                 if (checked.length > 2) {
                     cb.checked = false;
-                    alert('Máximo de 2 opções.');
+                    alert('Podes selecionar no máximo 2 opções.');
                 }
             });
         });
 
-        // Mostrar mensagem de sucesso após envio
+        // Mostrar mensagem de sucesso se vier com ?success=true
         if (window.location.search.includes('success')) {
             document.getElementById('successMessage').style.display = 'block';
             document.querySelector('form').style.display = 'none';
