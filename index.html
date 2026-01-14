@@ -187,17 +187,19 @@
 
         <div class="info-header">
             <p><strong>Data/Hora:</strong> <span id="currentTimestamp"></span></p>
-            <p><strong>Nome do atleta:</strong> 
-                <input type="text" id="athleteName" name="athlete_name" placeholder="O teu nome completo" 
-                    style="width: 180px; display: inline-block; margin-left: 8px; padding: 6px; font-size: 14px; color: #0d3b25;" required>
-            </p>
         </div>
 
         <!-- Formulário Netlify -->
         <form name="athlete-feedback" method="POST" data-netlify="true">
             <input type="hidden" name="form-name" value="athlete-feedback" />
 
-            <!-- Seleção do treinador -->
+            <!-- Nome do atleta (agora como pergunta normal) -->
+            <div class="question">
+                <label for="athlete_name">Nome do atleta:</label>
+                <input type="text" id="athlete_name" name="athlete_name" placeholder="Escreve o teu nome completo" required>
+            </div>
+
+            <!-- E-mail do treinador -->
             <div class="question">
                 <label for="coach_email">E-mail do teu treinador:</label>
                 <input type="email" id="coach_email" name="coach_email" placeholder="ex: treinador@clube.pt" required>
@@ -223,7 +225,7 @@
                     <label><input type="radio" name="q2" value="Frustrado/a"> Frustrado/a</label>
                     <label><input type="radio" name="q2" value="Desmotivado/a"> Desmotivado/a</label>
                     <label>
-                        Outro: <input type="text" name="q2_outro" placeholder="Descreve aqui..." style="width: 70%; margin-left: 8px; display: inline-block; color: #0d3b25;">
+                        Outro: <input type="text" name="q2_outro" placeholder="Descreve aqui..." style="width: 70%; margin-left: 8px; display: inline-block; color: #0d3b25;" value="">
                     </label>
                 </div>
             </div>
@@ -261,7 +263,7 @@
                     <label><input type="checkbox" name="q5" value="Mais atenção individual do treinador"> Mais atenção individual do treinador</label>
                     <label>
                         <input type="checkbox" name="q5_other">
-                        Outro: <input type="text" name="q5_other_text" placeholder="Descreve aqui..." style="width: 60%; margin-left: 8px; display: inline-block; color: #0d3b25;">
+                        Outro: <input type="text" name="q5_other_text" placeholder="Descreve aqui..." style="width: 60%; margin-left: 8px; display: inline-block; color: #0d3b25;" value="">
                     </label>
                 </div>
             </div>
