@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AthleteSense – Questionário Pós-Treino</title>
+    <title>AthleteSense – Feedback Pós-Treino</title>
     <style>
-        /* ... (mantém todo o teu CSS igual) ... */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -19,7 +18,7 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.94);
             color: #0d3b25;
@@ -179,53 +178,6 @@
             text-align: center;
             color: #0d3b25;
         }
-
-        .preview-section {
-            margin-top: 30px;
-            padding: 15px;
-            background: #f8fdf9;
-            border-radius: 10px;
-            border: 1px solid #c8e6c9;
-            display: none;
-        }
-        .preview-section h2 {
-            color: #2e7d32;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .preview-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .preview-table th, .preview-table td {
-            padding: 8px 12px;
-            border: 1px solid #a5d6a7;
-            text-align: left;
-            font-size: 14px;
-        }
-        .preview-table th {
-            background-color: #e8f5e9;
-            color: #0d3b25;
-        }
-
-        .btn-export, .btn-send {
-            padding: 10px 20px;
-            width: auto;
-            font-size: 16px;
-            margin: 0 6px;
-        }
-        .btn-export { background: #1976d2; }
-        .btn-send { background: #5d4037; }
-        .btn-export:hover { background: #0d47a1; }
-        .btn-send:hover { background: #3e2723; }
-
-        #emailStatus {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-            min-height: 24px;
-        }
     </style>
 </head>
 <body>
@@ -236,13 +188,24 @@
         <div class="info-header">
             <p><strong>Data/Hora:</strong> <span id="currentTimestamp"></span></p>
             <p><strong>Nome do atleta:</strong> 
-                <input type="text" id="athleteName" name="athleteName" placeholder="O teu nome" 
+                <input type="text" id="athleteName" name="athlete_name" placeholder="O teu nome completo" 
                     style="width: 180px; display: inline-block; margin-left: 8px; padding: 6px; font-size: 14px; color: #0d3b25;" required>
             </p>
         </div>
 
-        <form id="postTrainingForm">
-            <!-- ... (todas as perguntas iguais) ... -->
+        <!-- Formulário Netlify -->
+        <form name="athlete-feedback" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
+            <!-- Campo oculto anti-bot -->
+            <input type="hidden" name="form-name" value="athlete-feedback" />
+            
+            <!-- Seleção do treinador -->
+            <div class="question">
+                <label for="coach_email">E-mail do teu treinador:</label>
+                <input type="email" id="coach_email" name="coach_email" placeholder="ex: treinador@clube.pt" required>
+                <p class="optional">Este e-mail será usado apenas para lhe enviar o teu feedback.</p>
+            </div>
+
+            <!-- Pergunta 1 -->
             <div class="question">
                 <label>O treino de hoje correu bem?</label>
                 <div class="options">
@@ -252,6 +215,7 @@
                 </div>
             </div>
 
+            <!-- Pergunta 2 -->
             <div class="question">
                 <label>Como te sentes emocionalmente agora?</label>
                 <div class="options">
@@ -265,6 +229,7 @@
                 </div>
             </div>
 
+            <!-- Pergunta 3 -->
             <div class="question">
                 <label>O treino foi monótono ou repetitivo?</label>
                 <div class="options">
@@ -274,6 +239,7 @@
                 </div>
             </div>
 
+            <!-- Pergunta 4 -->
             <div class="question">
                 <label>Como te sentes fisicamente após o treino?</label>
                 <div class="mood-selector">
@@ -285,6 +251,7 @@
                 </div>
             </div>
 
+            <!-- Pergunta 5 -->
             <div class="question">
                 <label>O que melhoravas no treino de hoje? (Escolhe até 2 opções)</label>
                 <div class="options">
@@ -294,50 +261,30 @@
                     <label><input type="checkbox" name="q5" value="Mais tempo de recuperação"> Mais tempo de recuperação</label>
                     <label><input type="checkbox" name="q5" value="Mais atenção individual do treinador"> Mais atenção individual do treinador</label>
                     <label>
-                        <input type="checkbox" id="q5_other_check">
-                        Outro: <input type="text" id="q5_other_text" placeholder="Descreve aqui..." style="width: 60%; margin-left: 8px; display: inline-block; color: #0d3b25;">
+                        <input type="checkbox" name="q5_other">
+                        Outro: <input type="text" name="q5_other_text" placeholder="Descreve aqui..." style="width: 60%; margin-left: 8px; display: inline-block; color: #0d3b25;">
                     </label>
                 </div>
             </div>
 
+            <!-- Pergunta 6 -->
             <div class="question">
                 <label>Para ti, o que precisas melhorar ou trabalhar mais nos treinos?</label>
                 <textarea name="q6" placeholder="Ex: Quero melhorar os cruzamentos..." required></textarea>
             </div>
 
+            <!-- Pergunta 7 -->
             <div class="question">
                 <label>Há algo que queiras partilhar com o treinador que não foi abordado aqui?</label>
                 <span class="optional">(Opcional)</span>
                 <textarea name="q7" placeholder="Ex: Senti dores no tornozelo..."></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">Ver Pré-visualização</button>
+            <button type="submit" class="btn-submit">📤 Enviar Feedback ao Treinador</button>
         </form>
 
-        <div id="previewSection" class="preview-section">
-            <h2>📊 Pré-visualização</h2>
-            <table class="preview-table">
-                <thead><tr><th>Campo</th><th>Resposta</th></tr></thead>
-                <tbody id="previewBody"></tbody>
-            </table>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <!-- Campo para inserir o e-mail do treinador -->
-                <div style="margin: 15px 0;">
-                    <label for="coachEmailInput" style="display: block; margin-bottom: 6px; font-weight: bold; color: #0d3b25;">
-                        E-mail do treinador:
-                    </label>
-                    <input type="email" id="coachEmailInput" placeholder="ex: treinador@clube.pt" 
-                        style="width: 240px; padding: 8px; border: 1px solid #a5d6a7; border-radius: 6px;">
-                </div>
-
-                <button id="sendEmailBtn" class="btn-submit btn-send">📤 Enviar ao Treinador</button>
-            </div>
-            <div id="emailStatus"></div>
-        </div>
-
         <div id="successMessage" class="success-message">
-            ✅ Pronto! Podes enviar os teus dados ao treinador.
+            ✅ Feedback enviado com sucesso ao teu treinador!
         </div>
     </div>
 
@@ -346,9 +293,8 @@
         const now = new Date();
         const timestampStr = `${now.toLocaleDateString('pt-PT')}, ${now.toLocaleTimeString('pt-PT', { hour12: false })}`;
         document.getElementById('currentTimestamp').textContent = timestampStr;
-        document.getElementById('timestampInput').value = timestampStr;
 
-        // === Lógica de UI (igual) ===
+        // === Lógica de UI ===
         const q2Inputs = document.querySelectorAll('input[name="q2"]');
         const q2OutroField = document.querySelector('input[name="q2_outro"]');
         q2OutroField.disabled = true;
@@ -365,17 +311,18 @@
             });
         });
 
-        const otherCheck = document.getElementById('q5_other_check');
-        const otherText = document.getElementById('q5_other_text');
+        const otherCheck = document.querySelector('input[name="q5_other"]');
+        const otherText = document.querySelector('input[name="q5_other_text"]');
         otherText.disabled = true;
         otherCheck.addEventListener('change', () => {
             otherText.disabled = !otherCheck.checked;
             if (otherCheck.checked) otherText.focus();
         });
 
-        document.querySelectorAll('input[name="q5"], #q5_other_check').forEach(cb => {
+        const q5Checkboxes = document.querySelectorAll('input[name="q5"], input[name="q5_other"]');
+        q5Checkboxes.forEach(cb => {
             cb.addEventListener('change', () => {
-                const checked = Array.from(document.querySelectorAll('input[name="q5"]:checked, #q5_other_check:checked'));
+                const checked = Array.from(q5Checkboxes).filter(c => c.checked);
                 if (checked.length > 2) {
                     cb.checked = false;
                     alert('Máximo de 2 opções.');
@@ -383,166 +330,11 @@
             });
         });
 
-        // === Obter dados ===
-        function getFormattedData() {
-            const name = document.getElementById('athleteName').value.trim();
-            if (!name) throw new Error('Insere o teu nome.');
-
-            const formData = new FormData(document.getElementById('postTrainingForm'));
-            const data = {};
-
-            for (let [k, v] of formData.entries()) {
-                if (k === 'q5') {
-                    if (!data[k]) data[k] = [];
-                    data[k].push(v);
-                } else {
-                    data[k] = v;
-                }
-            }
-
-            if (data.q2 === 'Outro') data.q2 = formData.get('q2_outro')?.trim() || 'Não especificado';
-            
-            if (otherCheck.checked) {
-                const val = otherText.value.trim() || 'Não especificado';
-                if (!data.q5) data.q5 = [];
-                data.q5.push('Outro: ' + val);
-            }
-
-            return {
-                "Nome do Atleta": name,
-                "Data/Hora": data.timestamp || timestampStr,
-                "Treino correu bem?": data.q1 || '',
-                "Estado emocional": data.q2 || '',
-                "Treino monótono?": data.q3 || '',
-                "Estado físico": data.q4 || '',
-                "Sugestões de melhoria": Array.isArray(data.q5) ? data.q5.join('; ') : (data.q5 || ''),
-                "Área de melhoria": data.q6 || '',
-                "Comentário adicional": data.q7 || ''
-            };
-        }
-
-        // === Formatar texto para e-mail ===
-        function formatEmailBody(data) {
-            return `
-📌 Feedback Pós-Treino – AthleteSense
-
-Nome do Atleta: ${data["Nome do Atleta"]}
-Data/Hora: ${data["Data/Hora"]}
-
-✅ Treino correu bem? 
-→ ${data["Treino correu bem?"]}
-
-🧠 Estado emocional: 
-→ ${data["Estado emocional"]}
-
-🔁 Treino monótono? 
-→ ${data["Treino monótono?"]}
-
-💪 Estado físico: 
-→ ${data["Estado físico"]}
-
-💡 Sugestões de melhoria: 
-→ ${data["Sugestões de melhoria"]}
-
-🎯 Área de melhoria: 
-→ ${data["Área de melhoria"]}
-
-💬 Comentário adicional: 
-→ ${data["Comentário adicional"] || "Nenhum"}
-
-—
-Enviado via AthleteSense
-            `.trim();
-        }
-
-        // === Pré-visualização ===
-        function updatePreview(data) {
-            const tbody = document.getElementById('previewBody');
-            tbody.innerHTML = '';
-            Object.entries(data).forEach(([k, v]) => {
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = k;
-                row.insertCell(1).textContent = v;
-            });
-            document.getElementById('previewSection').style.display = 'block';
+        // Mostrar mensagem de sucesso após envio
+        if (window.location.search.includes('success')) {
             document.getElementById('successMessage').style.display = 'block';
+            document.querySelector('form').style.display = 'none';
         }
-
-        // === Função para copiar texto ===
-        async function copyToClipboard(text) {
-            try {
-                await navigator.clipboard.writeText(text);
-                return true;
-            } catch (err) {
-                // Fallback para browsers antigos
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    return true;
-                } catch (err2) {
-                    return false;
-                } finally {
-                    document.body.removeChild(textArea);
-                }
-            }
-        }
-
-        // === Enviar ao treinador ===
-        document.getElementById('sendEmailBtn').addEventListener('click', async function() {
-            const coachEmail = document.getElementById('coachEmailInput').value.trim();
-            if (!coachEmail) {
-                alert('Por favor, insere o e-mail do treinador.');
-                document.getElementById('coachEmailInput').focus();
-                return;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(coachEmail)) {
-                alert('Por favor, insere um e-mail válido.');
-                return;
-            }
-
-            try {
-                const data = getFormattedData();
-                const emailBody = formatEmailBody(data);
-                const subject = `Feedback Pós-Treino – ${data["Nome do Atleta"]}`;
-
-                // Copiar corpo do e-mail para a área de transferência
-                const copied = await copyToClipboard(emailBody);
-
-                // Abrir cliente de e-mail
-                const mailtoLink = `mailto:${encodeURIComponent(coachEmail)}?subject=${encodeURIComponent(subject)}`;
-                window.location.href = mailtoLink;
-
-                // Mostrar mensagem
-                const status = document.getElementById('emailStatus');
-                if (copied) {
-                    status.innerHTML = '✅ Dados copiados! Cola no corpo do e-mail que acabou de abrir.';
-                    status.style.color = '#1b5e20';
-                } else {
-                    status.innerHTML = '⚠️ Abre o e-mail e cola este texto no corpo:<br><pre style="text-align:left;background:#f0f0f0;padding:8px;margin-top:8px;overflow:auto;">' + emailBody + '</pre>';
-                    status.style.color = '#e65100';
-                }
-
-            } catch (err) {
-                alert('Erro: ' + err.message);
-            }
-        });
-
-        // === Submissão do formulário ===
-        document.getElementById('postTrainingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            try {
-                const data = getFormattedData();
-                updatePreview(data);
-                document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
-            } catch (err) {
-                alert(err.message);
-            }
-        });
     </script>
 </body>
 </html>
